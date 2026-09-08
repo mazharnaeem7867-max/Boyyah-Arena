@@ -37,6 +37,29 @@ jobs:
           echo "android.useAndroidX=true" > gradle.properties
           echo "android.enableJetifier=true" >> gradle.properties
 
+      - name: Fix JVM targets
+        working-directory: boyyah
+        run: |
+          python3 - <<'PY'
+          p = "app/build.gradle.kts"
+          s = open(p).read()
+          s = s.replace(
+              '    compileSdk = 35\n',
+              '''    compileSdk = 35
+
+              compileOptions {
+                  sourceCompatibility = JavaVersion.VERSION_17
+                  targetCompatibility = JavaVersion.VERSION_17
+              }
+
+              kotlinOptions {
+                  jvmTarget = "17"
+              }
+          '''
+          )
+          open(p, "w").write(s)
+          PY
+
       - name: Build APK
         working-directory: boyyah
         run: gradle assembleDebug --stacktrace
