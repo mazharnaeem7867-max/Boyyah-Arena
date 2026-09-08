@@ -60,6 +60,35 @@ jobs:
           open(p, "w").write(s)
           PY
 
+      - name: Fix Kotlin button calls
+        working-directory: boyyah
+        run: |
+          python3 - <<'PY'
+          p = "app/src/main/java/com/boyyaharena/app/MainActivity.kt"
+          s = open(p).read()
+          s = s.replace(
+              'button("NEXT — PAYMENT") { showPayment(name.text.toString(), uid.text.toString()) }',
+              'button("NEXT — PAYMENT", { showPayment(name.text.toString(), uid.text.toString()) })'
+          )
+          s = s.replace(
+              'button("SUBMIT REGISTRATION") {\n            booked.add(selectedSlot)\n            showSuccess(name.ifBlank{"Player"}, uid.ifBlank{"—"}, tx.text.toString())\n        }',
+              'button("SUBMIT REGISTRATION", {\n            booked.add(selectedSlot)\n            showSuccess(name.ifBlank{"Player"}, uid.ifBlank{"—"}, tx.text.toString())\n        })'
+          )
+          s = s.replace(
+              'button("MY SLOTS") { showMySlots() }',
+              'button("MY SLOTS", { showMySlots() })'
+          )
+          s = s.replace(
+              'button("RULES") { showRules() }',
+              'button("RULES", { showRules() })'
+          )
+          s = s.replace(
+              'button("ADMIN PANEL (DEMO)") { showAdmin() }',
+              'button("ADMIN PANEL (DEMO)", { showAdmin() })'
+          )
+          open(p, "w").write(s)
+          PY
+
       - name: Build APK
         working-directory: boyyah
         run: gradle assembleDebug --stacktrace
